@@ -1,29 +1,26 @@
 const express = require('express');
-const connectDB = require('./config/db');
-
 const app = express();
-
-//My Routes
-const userRoute = require('./routes/api/users');
-const authRoute = require('./routes/api/auth');
-const profileRoute = require('./routes/api/profile');
-const postRoute = require('./routes/api/posts');
-
-//Connect Database
+const connectDB = require('./config/db');
+const path = require('path');
 connectDB();
+//middleware
+app.use(express.json({ extended: false }));
 
-//Init Middleware
-app.use(express.json({extended: false}));
+//define routes
+app.use('/api/users', require('./routes/api/users'));
+app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/profile', require('./routes/api/profile'));
+app.use('/api/posts', require('./routes/api/post'));
 
-app.get('/', (req, res) => res.send('API Running'));
+//serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static('client/build'));
 
-// Define Routes
-app.use('/api/users', userRoute);
-app.use('/api/auth', authRoute);
-app.use('/api/profile', profileRoute);
-app.use('/api/posts', postRoute);
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));  
- 
+app.listen(PORT, () => console.log(`server started on port ${PORT}`));
