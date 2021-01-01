@@ -1,4 +1,4 @@
-# DevHub
+# DevConnector
 
 Social network website for developers using MERN. Redux is used for a state management.It is a small social network app that includes authentication, profiles and forum posts.
 
